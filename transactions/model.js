@@ -11,8 +11,7 @@ export class Transaction {
             return Promise.reject({
                 code: 500,
                 message: "Usuario não encontrado"
-            })
-
+            });
         }
 
         return admin.firestore()
@@ -20,8 +19,8 @@ export class Transaction {
             .where("user.uid", "==", this.user.uid)
             .orderBy("date", "desc")
             .get()
-            .then((snapshot) => {
-                return snapshot.docs.map((doc) => ({
+            .then(snapshot => {
+                return snapshot.docs.map(doc => ({
                     ...doc.data(),
                     uid: doc.id,
                 }))
