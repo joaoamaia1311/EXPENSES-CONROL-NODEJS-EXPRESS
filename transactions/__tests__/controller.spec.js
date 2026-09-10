@@ -12,7 +12,9 @@ describe('Transaction controller', () => {
     })
 
     test('given find transaction by user, when succes, the return transactions', (done) => {
+
         const transactions = [{uid: 1}, {uid: 2}]
+
         const controller = new TransactionController({
             findByUser: () => Promise.resolve(transactions)
         });
@@ -21,16 +23,43 @@ describe('Transaction controller', () => {
             expect(response._json).toEqual(transactions);
             done();
         });
-
-        expect(false).toBeTruth();
     })
+
+    test('given find transactions by user, when fail, then return error', (done) => {
+        const error = {code: 500};
+
+        const controller = new TransactionController({
+            findByUser: () => Promise.reject(error)
+        });
+
+        controller.findByUser(request, response).then(() => {
+            expect(response._json).toEqual(error);
+            done();
+        })
+    })
+
+    test('given find transactions by user, when fail, then return error status 500', (done) => {
+        const error = {code: 500};
+
+        const controller = new TransactionController({
+            findByUser: () => Promise.reject(error)
+        });
+
+        controller.findByUser(request, response).then(() => {
+            expect(response._status).toEqual(500);
+            done();
+        })
+    })
+    
     
     class ResponseMock {
         _json = null;
+        _status = 0;
         json(value) {
             this._json = value;
         }
         status(value) {
+            this._status = value;
             return this;
         }
     }

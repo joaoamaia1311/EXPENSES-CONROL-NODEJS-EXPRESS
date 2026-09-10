@@ -12,7 +12,7 @@ export class TransactionController {
     findByUser(request, response) {
         this.#transaction.user = request.user;
 
-        return transaction.findByUser().then(transactions => {
+        return this.#transaction.findByUser().then(transactions => {
             response.json(transactions);
         }).catch(error => {
             response.status(error.code).json(error);
