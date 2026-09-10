@@ -12,14 +12,13 @@ describe('Transaction controller', () => {
     })
 
     test('given find transaction by user, when succes, the return transactions', (done) => {
-        const request = {};
-        const response = new ResponseMock();
+        const transactions = [{uid: 1}, {uid: 2}]
         const controller = new TransactionController({
-            findByUser: () => Promise.resolve([{uid: 1}, {uid: 2}])
+            findByUser: () => Promise.resolve(transactions)
         });
 
         controller.findByUser(request, response).then(() => {
-            expect(response._json).toEqual([{uid: 1}, {uid: 2}]);
+            expect(response._json).toEqual(transactions);
             done();
         });
 
