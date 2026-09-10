@@ -1,30 +1,26 @@
+import admin from "firebase-admin";
+import { TransactionRepository } from "./repository.js";
+import { UserNotInformedError } from "./errors/user-not-informed-error.js";
+
 export class Transaction {
-    date;
-    description;
-    money;
-    transactionType;
-    type;
-    user;
+	date;
+	description;
+	money;
+	transactionType;
+	type;
+	user;
 
-    findbyUser() {
-        if (!this.user?.uid) {
-            return Promise.reject({
-                code: 500,
-                message: "Usuario não encontrado"
-            });
-        }
+	#repository;
 
-        return admin.firestore()
-            .collection("transactions")
-            .where("user.uid", "==", this.user.uid)
-            .orderBy("date", "desc")
-            .get()
-            .then(snapshot => {
-                return snapshot.docs.map(doc => ({
-                    ...doc.data(),
-                    uid: doc.id,
-                }))
-            })
-    }
+	constructor(transactionRepository) {
+		this.#repository = transactionRepository || new TransactionRepository();
+	}
 
+	findByUser() {
+		if (!this.user?.uid) {
+			return Promise.reject(new UserNotInformedError());
+		}
+
+		return this.#repository.findByUserUid(this.user.uid);
+	}
 }
